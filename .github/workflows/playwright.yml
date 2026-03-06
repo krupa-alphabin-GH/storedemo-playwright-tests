@@ -22,13 +22,15 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies & browsers
+        run: |
+          npm install
+          npm install --save-dev @testdino/playwright@latest
+          npx playwright install --with-deps chromium
 
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
-
-      - name: Run tests (Shard ${{ matrix.shard }}/10)
+      - name: Run Playwright shard with TestDino
+        env:
+          TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
         run: npx playwright test --shard=${{ matrix.shard }}/10
 
       - name: Upload test results

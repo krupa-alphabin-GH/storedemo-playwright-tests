@@ -7,8 +7,14 @@ export default defineConfig({
   fullyParallel: true,
   workers: 5,
   reporter: 'html',
-  use: {
-    baseURL: 'https://storedemo.testdino.com',
-    headless: true,
-  },
+  projects: [
+    {
+      name: 'chromium',
+      use: {
+        browserName: 'chromium',
+        baseURL: 'https://storedemo.testdino.com',
+        headless: true,
+      },
+    },
+  ],
 });
