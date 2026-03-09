@@ -1,32 +1,59 @@
-import { defineConfig } from '@playwright/test';                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                          
-  export default defineConfig({                                                                                                                                                                                                                                               
-    testDir: './tests',                                                                                                                                                                                                                                                       
-    timeout: 60_000,                                                                                                                                                                                                                                                      
-    retries: 2,                                                                                                                                                                                                                                                               
-    fullyParallel: true,                                                                                                                                                                                                                                                  
-    workers: 5,                                                                                                                                                                                                                                                           
-    reporter: [                                                                                                                                                                                                                                                           
-      ['html', {                                                                                                                                                                                                                                                          
-        outputFolder: 'playwright-report',                                                                                                                                                                                                                                
-        open: 'never'                                                                                                                                                                                                                                                     
-      }],                                                                                                                                                                                                                                                                 
-      ['blob', { outputDir: 'blob-report' }], // Blob reporter for merging                                                                                                                                                                                                
-      ['json', { outputFile: './playwright-report/report.json' }],                                                                                                                                                                                                        
-                                                                                                                                                                                                                                                                          
-      ['@testdino/playwright', {                                                                                                                                                                                                                                          
-         token: process.env.TESTDINO_TOKEN,                                                                                                                                                                                                                               
-        serverUrl: 'https://staging-api.testdino.com',                                                                                                                                                                                                                    
-      }],                                                                                                                                                                                                                                                                 
-    ],                                                                                                                                                                                                                                                                    
-    projects: [                                                                                                                                                                                                                                                           
-      {                                                                                                                                                                                                                                                                   
-        name: 'chromium',                                                                                                                                                                                                                                                 
-        use: {                                                                                                                                                                                                                                                            
-          browserName: 'chromium',                                                                                                                                                                                                                                        
-          baseURL: 'https://storedemo.testdino.com',                                                                                                                                                                                                                      
-          headless: true,                                                                                                                                                                                                                                                 
-        },                                                                                                                                                                                                                                                                
-      },                                                                                                                                                                                                                                                                  
-    ],                                                                                                                                                                                                                                                                    
-  });             
+// @ts-check
+import { defineConfig, devices } from '@playwright/test';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ quiet: true });
+
+const isCI = !!process.env.CI;
+
+export default defineConfig({
+  testDir: './tests',
+
+  fullyParallel: true,
+  forbidOnly: isCI,
+
+  retries: isCI ? 2 : 0,
+  workers: isCI ? 5 : 5,
+
+  timeout: 60 * 1000,
+
+  reporter: [
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['blob', { outputDir: 'blob-report' }],
+    ['json', { outputFile: './playwright-report/report.json' }],
+    [
+      '@testdino/playwright',
+      {
+        token: process.env.TESTDINO_TOKEN,
+        serverUrl: 'https://staging-api.testdino.com',
+      },
+    ],
+  ],
+
+  use: {
+    baseURL: 'https://storedemo.testdino.com',
+    headless: true,
+
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+  },
+
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+      grep: /@chromium/,
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+      grep: /@firefox/,
+    },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+      grep: /@webkit/,
+    },
+  ],
+});
