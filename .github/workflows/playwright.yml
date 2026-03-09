@@ -167,7 +167,7 @@ jobs:
       - name: Install dependencies & browsers
         run: |
           npm install
-          npm install --save-dev @testdino/playwright@latest
+          npm install file:testdino-playwright-1.0.11.tgz
           npx playwright install --with-deps chromium webkit firefox
 
       # ✅ Run Playwright shard with TestDino
