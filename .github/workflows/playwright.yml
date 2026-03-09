@@ -45,8 +45,8 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-          npm install --save-dev @testdino/playwright@latest
-          npx playwright install --with-deps
+          npm install ./testdino-playwright-10.11.tgz
+          npx playwright install --with-deps chromium
 
       - name: Run Playwright Tests
         env:
