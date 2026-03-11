@@ -24,13 +24,20 @@ export default defineConfig({
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
     ['blob', { outputDir: 'blob-report' }], // Blob reporter for merging
     ['json', { outputFile: './playwright-report/report.json' }],
-    [
-      '@testdino/playwright',
-      {
-        token: process.env.TESTDINO_TOKEN,
-        serverUrl: 'https://staging-api.testdino.com',
-      },
-    ],
+    // Only enable TestDino when token is set (use TESTDINO_SERVER_URL in CI if staging is unreachable)
+    ...(process.env.TESTDINO_TOKEN
+      ? ([
+          [
+            '@testdino/playwright',
+            {
+              token: process.env.TESTDINO_TOKEN,
+              serverUrl:
+                process.env.TESTDINO_SERVER_URL ||
+                'https://staging-api.testdino.com',
+            },
+          ],
+        ] as const)
+      : []),
   ],
 
   use: {

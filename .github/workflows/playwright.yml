@@ -52,10 +52,11 @@ jobs:
           npm install ./testdino-playwright-1.0.11.tgz
           npx playwright install --with-deps chromium firefox webkit
 
+      # If staging is unreachable from GitHub (ENOTFOUND), set repo secret TESTDINO_SERVER_URL to a reachable API URL, or leave TESTDINO_TOKEN unset to skip TestDino reporter
       - name: Run Playwright Tests
         env:
           TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
-          TESTDINO_SERVER_URL: https://staging-api.testdino.com
+          TESTDINO_SERVER_URL: ${{ secrets.TESTDINO_SERVER_URL }}
         run: |
           npx playwright test \
             --grep="@chromium|@firefox|@webkit" \
