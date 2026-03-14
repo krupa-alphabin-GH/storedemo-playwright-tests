@@ -1,15 +1,17 @@
+# .github/workflows/playwright-daily.yml
+# Runs Playwright test shards with TestDino (staging) + merges reports
+
 name: Run Playwright tests
 
 on:
   push:
   pull_request:
-  schedule:
-    - cron: '30 3 * * *' # 9:00 AM IST everyday
   workflow_dispatch:
 
 jobs:
   run-tests:
-    name: Run Playwright tests ${{ matrix.shardIndex }}/10
+    name: Run shard ${{ matrix.shard }}/10
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.58.2-noble
@@ -17,19 +19,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5]
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     env:
       TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
       TESTDINO_SERVER_URL: https://stg-api.testdino.com
       TESTDINO_CI_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Checkout repo
+        uses: actions/checkout@v6
         with:
-          node-version: "20"
+          fetch-depth: 0
 
+      # ✅ Required Node version
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
+      # ✅ Required env variables for tests
       - name: Create .env file
         run: |
           echo "USERNAME=${{ secrets.USERNAME }}" >> .env
@@ -41,7 +48,7 @@ jobs:
           echo "STATE=${{ secrets.STATE }}" >> .env
           echo "COUNTRY=${{ secrets.COUNTRY }}" >> .env
           echo "ZIP_CODE=${{ secrets.ZIP_CODE }}" >> .env
-
+      # ✅ Cache npm dependencies
       - name: Cache npm dependencies
         uses: actions/cache@v3
         with:
@@ -49,20 +56,15 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      # ✅ Install dependencies + TestDino (.tgz)
       - name: Install dependencies
         run: |
           npm install
           npm install ./testdino-playwright-1.0.11.tgz
-          npx playwright install --with-deps chromium
-
-      # If staging is unreachable from GitHub (ENOTFOUND), set repo secret TESTDINO_SERVER_URL to a reachable API URL, or leave TESTDINO_API_KEY unset to skip TestDino reporter
-      - name: Run Playwright Tests
-        env:
-          TESTDINO_API_KEY: ${{ secrets.TESTDINO_API_KEY }}
-          TESTDINO_SERVER_URL: ${{ secrets.TESTDINO_SERVER_URL }}
-        run: |
-          npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-
+      # ✅ Run Playwright shard with TestDino (STAGING)
+      - name: Run Playwright tests
+        run: npx tdpw test -t $TESTDINO_TOKEN --server-url $TESTDINO_SERVER_URL --ci-run-id $TESTDINO_CI_RUN_ID --shard=${{ matrix.shard }}/10 --workers=5
+      # ✅ Upload blob report (needed for merge)
       - name: Upload blob report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -78,19 +80,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js 22.x
         uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "22"
 
+      # ✅ Install deps (TestDino not required here)
       - name: Install dependencies
         run: |
           npm ci
-          npm install ./testdino-playwright-1.0.11.tgz
           npx playwright install --with-deps
-
+      # ✅ Download all shard blob reports
       - name: Download all blob reports
         uses: actions/download-artifact@v4
         with:
@@ -98,22 +103,14 @@ jobs:
           pattern: blob-report-*
           merge-multiple: true
 
-      - name: Merge HTML & JSON reports
-        env:
-          PLAYWRIGHT_JSON_OUTPUT_FILE: ./playwright-report/report.json
+      # ✅ Merge Playwright HTML report
+      - name: Merge Playwright HTML report
         run: |
-          mkdir -p playwright-report
-          npx playwright merge-reports --reporter html --reporter json ./all-blob-reports
-
+          npx playwright merge-reports ./all-blob-reports
+      # ✅ Upload merged Playwright report
       - name: Upload combined Playwright report
         uses: actions/upload-artifact@v4
         with:
           name: Playwright Test Report
           path: ./playwright-report
           retention-days: 14
-
-      - name: Upload report to TestDino
-        env:
-          TESTDINO_API_KEY: ${{ secrets.TESTDINO_API_KEY }}
-        run: |
-          npx tdpw@latest upload ./playwright-report --token="$TESTDINO_API_KEY"
