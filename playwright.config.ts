@@ -12,7 +12,7 @@ export default defineConfig({
   snapshotDir: './__screenshots__', 
   fullyParallel: true,
   forbidOnly: isCI,
-  retries: isCI ? 3 : 3, // Enable retries for flaky test behavior
+  retries: isCI ? 3 : 1,
   workers: isCI ? 5 : 5,
 
   timeout: 60 * 1000,
