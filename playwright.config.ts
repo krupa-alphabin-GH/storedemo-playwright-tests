@@ -15,7 +15,7 @@ export default defineConfig({
   retries: isCI ? 2 : 1,
   workers: isCI ? 5 : 5,
 
-  timeout: 60 * 1000,
+  timeout: 15 * 1000,
 
   reporter: [
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
@@ -42,7 +42,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     },
   ],
 });

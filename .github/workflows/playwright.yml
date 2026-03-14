@@ -10,24 +10,31 @@ on:
 
 jobs:
   run-tests:
-    name: Run shard ${{ matrix.shardIndex }}/10
+    name: Run shard ${{ matrix.shard }}/5
+    timeout-minutes: 15
     runs-on: ubuntu-latest
-
+    container:
+      image: mcr.microsoft.com/playwright:v1.58.2-noble
+      options: --user root
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        shardTotal: [10]
-
+        shard: [1, 2, 3, 4, 5]
+    env:
+      TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
+      TESTDINO_SERVER_URL: https://stg-api.testdino.com
+      TESTDINO_CI_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       # ✅ Required Node version
-      - name: Setup Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: "22"
 
       # ✅ Required env variables for tests
       - name: Create .env file
@@ -49,27 +56,20 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      # ✅ Install dependencies + TestDino (.tgz) + Playwright browsers
-      - name: Install dependencies & browsers
+      # ✅ Install dependencies + TestDino (.tgz)
+      - name: Install dependencies
         run: |
-          npm ci
+          npm install
           npm install ./testdino-playwright-1.0.11.tgz
-          npx playwright install --with-deps chromium firefox webkit
       # ✅ Run Playwright shard with TestDino (STAGING)
-      - name: Run Playwright shard with TestDino
-        env:
-          TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
-          TESTDINO_SERVER_URL: https://staging-api.testdino.com
-        run: |
-          npx playwright test \
-            --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
-            --grep "@chromium|@firefox|@webkit|@android|@ios|@api" \
+      - name: Run Playwright tests
+        run: npx tdpw test -t $TESTDINO_TOKEN --server-url $TESTDINO_SERVER_URL --ci-run-id $TESTDINO_CI_RUN_ID --shard=${{ matrix.shard }}/5 --workers=7
       # ✅ Upload blob report (needed for merge)
       - name: Upload blob report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: blob-report-${{ matrix.shardIndex }}
+          name: blob-report-${{ matrix.shard }}
           path: ./blob-report
           retention-days: 1
 
@@ -81,12 +81,14 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 20.x
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v6
         with:
-          node-version: '20'
+          fetch-depth: 0
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
 
       # ✅ Install deps (TestDino not required here)
       - name: Install dependencies

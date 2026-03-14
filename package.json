@@ -3,19 +3,19 @@
   "version": "1.0.0",
   "scripts": {
     "test": "npx playwright test",
-    "test:shard1": "npx playwright test tests/shard-01.spec.ts",
-    "test:shard2": "npx playwright test tests/shard-02.spec.ts",
-    "test:shard3": "npx playwright test tests/shard-03.spec.ts",
-    "test:shard4": "npx playwright test tests/shard-04.spec.ts",
-    "test:shard5": "npx playwright test tests/shard-05.spec.ts",
-    "test:shard6": "npx playwright test tests/shard-06.spec.ts",
-    "test:shard7": "npx playwright test tests/shard-07.spec.ts",
-    "test:shard8": "npx playwright test tests/shard-08.spec.ts",
-    "test:shard9": "npx playwright test tests/shard-09.spec.ts",
-    "test:shard10": "npx playwright test tests/shard-10.spec.ts"
+    "test:homepage": "npx playwright test tests/homepage-navigation.spec.ts",
+    "test:listing": "npx playwright test tests/product-listing.spec.ts",
+    "test:search": "npx playwright test tests/product-search.spec.ts",
+    "test:details": "npx playwright test tests/product-details.spec.ts",
+    "test:cart": "npx playwright test tests/shopping-cart.spec.ts",
+    "test:checkout": "npx playwright test tests/checkout-flow.spec.ts",
+    "test:auth": "npx playwright test tests/user-authentication.spec.ts",
+    "test:profile": "npx playwright test tests/user-profile.spec.ts",
+    "test:api-users": "npx playwright test tests/api-users.spec.ts",
+    "test:api-products": "npx playwright test tests/api-products.spec.ts"
   },
   "devDependencies": {
-    "@playwright/test": "^1.50.0",
+    "@playwright/test": "^1.49.1",
     "@types/node": "^25.3.5"
   },
   "dependencies": {
