@@ -8,11 +8,11 @@ test.describe('User Profile', () => {
     await expect(page).toHaveURL(/storedemo/);
   });
 
-  // test('Page document has a title', async ({ page }) => {
-  //   await page.goto('/');
-  //   const title = await page.title();
-  //   expect(title.length).toBeGreaterThan(0);
-  // });
+  test('Page document has a title', async ({ page }) => {
+    await page.goto('/');
+    const title = await page.title();
+    expect(title.length).toBeGreaterThan(0);
+  });
 
   test('Main content area is rendered', async ({ page }) => {
     await page.goto('/');
