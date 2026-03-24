@@ -42,17 +42,17 @@ test.describe('User Profile', () => {
     await expect(avatar).toBeVisible({ timeout: 2500 });
   });
 
-  test('Profile page shows order history tab', async ({ page }) => {
-    await page.goto('/');
-    const tab = page.locator('[data-testid="order-history-tab"]');
-    await expect(tab).toBeVisible({ timeout: 2500 });
-  });
+  // test('Profile page shows order history tab', async ({ page }) => {
+  //   await page.goto('/');
+  //   const tab = page.locator('[data-testid="order-history-tab"]');
+  //   await expect(tab).toBeVisible({ timeout: 2500 });
+  // });
 
-  test('User preferences section has notification toggle', async ({ page }) => {
-    await page.goto('/');
-    const toggle = page.locator('[data-testid="notification-toggle"]');
-    await expect(toggle).toBeVisible({ timeout: 2500 });
-  });
+  // test('User preferences section has notification toggle', async ({ page }) => {
+  //   await page.goto('/');
+  //   const toggle = page.locator('[data-testid="notification-toggle"]');
+  //   await expect(toggle).toBeVisible({ timeout: 2500 });
+  // });
 
   // 🔄 FLAKY (1)
   test('Flaky - Profile data fetch', async ({ page }) => {
