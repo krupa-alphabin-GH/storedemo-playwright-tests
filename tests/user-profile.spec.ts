@@ -54,21 +54,21 @@ test.describe('User Profile', () => {
     await expect(toggle).toBeVisible({ timeout: 2500 });
   });
 
-  // // 🔄 FLAKY (1)
-  // test('Flaky - Profile data fetch', async ({ page }) => {
-  //   if (test.info().retry === 0) {
-  //     expect(true).toBe(false);
-  //   }
-  //   await page.goto('/');
-  //   const title = await page.title();
-  //   expect(title.length).toBeGreaterThan(0);
-  // });
+  // 🔄 FLAKY (1)
+  test('Flaky - Profile data fetch', async ({ page }) => {
+    if (test.info().retry === 0) {
+      expect(true).toBe(false);
+    }
+    await page.goto('/');
+    const title = await page.title();
+    expect(title.length).toBeGreaterThan(0);
+  });
 
-  // // 🚫 SKIPPED (1)
-  // test.skip('Upload profile picture', async ({ page }) => {
-  //   await page.goto('/');
-  //   await page.setInputFiles('[data-testid="avatar-upload"]', 'test.png');
-  // });
+  // 🚫 SKIPPED (1)
+  test.skip('Upload profile picture', async ({ page }) => {
+    await page.goto('/');
+    await page.setInputFiles('[data-testid="avatar-upload"]', 'test.png');
+  });
 
 
 });
