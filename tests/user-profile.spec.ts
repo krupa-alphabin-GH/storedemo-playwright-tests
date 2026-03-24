@@ -52,11 +52,11 @@ test.describe('User Profile', () => {
     expect(title.length).toBeGreaterThan(0);
   });
 
-  // // 🚫 SKIPPED (1)
-  // test.skip('Upload profile picture', async ({ page }) => {
-  //   await page.goto('/');
-  //   await page.setInputFiles('[data-testid="avatar-upload"]', 'test.png');
-  // });
+  // 🚫 SKIPPED (1)
+  test.skip('Upload profile picture', async ({ page }) => {
+    await page.goto('/');
+    await page.setInputFiles('[data-testid="avatar-upload"]', 'test.png');
+  });
 
 
 });
