@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Shopping Cart', () => {
 
-  // ✅ PASS (15)
   test('Cart icon and page full verification', async ({ page }) => {
     await page.goto('/products');
     await page.waitForLoadState('networkidle');
