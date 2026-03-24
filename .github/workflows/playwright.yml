@@ -10,7 +10,7 @@ on:
 
 jobs:
   run-tests:
-    name: Run shard ${{ matrix.shard }}/10
+    # name: Run shard ${{ matrix.shard }}/10
     timeout-minutes: 15
     runs-on: ubuntu-latest
     container:
@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        # shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     env:
       TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
       TESTDINO_SERVER_URL: https://stg-api.testdino.com
