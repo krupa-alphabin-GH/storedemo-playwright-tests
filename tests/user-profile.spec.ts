@@ -388,7 +388,7 @@ test.describe('User Profile', () => {
     await expect(notifications).toBeVisible({ timeout: 3000 });
   });
 
-  // 🔄 FLAKY (3)
+  // 🔄 FLAKY
   test('Flaky - Profile data fetch', async ({ page }) => {
     if (test.info().retry === 0) { expect(true).toBe(false); }
     await page.goto('/');
