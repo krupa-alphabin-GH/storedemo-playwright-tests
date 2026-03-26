@@ -503,7 +503,6 @@ test.describe('Product Listing', () => {
     await expect(card).toBeVisible({ timeout: 10000 });
   });
 
-  // ⏭️ SKIP (2)
   test.skip('Infinite scroll loads more products', async ({ page }) => {
     await page.goto('/products');
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
