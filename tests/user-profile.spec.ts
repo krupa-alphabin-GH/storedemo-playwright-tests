@@ -412,7 +412,7 @@ test.describe('User Profile', () => {
     await expect(page).toHaveURL(/storedemo/);
   });
 
- 
+ //skip
   test.skip('Upload profile picture', async ({ page }) => {
     await page.goto('/');
   });
