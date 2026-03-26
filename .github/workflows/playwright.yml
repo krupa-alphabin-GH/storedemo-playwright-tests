@@ -18,8 +18,8 @@ jobs:
       options: --user root
     strategy:
       fail-fast: false
-      matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      # matrix:
+      #   shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     env:
       TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
       TESTDINO_SERVER_URL: https://stg-api.testdino.com
@@ -63,8 +63,8 @@ jobs:
           npm install ./testdino-playwright-1.0.11.tgz
       # ✅ Run Playwright shard with TestDino (STAGING)
       - name: Run Playwright tests
-        run: npx tdpw test -t $TESTDINO_TOKEN --server-url $TESTDINO_SERVER_URL --ci-run-id $TESTDINO_CI_RUN_ID --shard=${{ matrix.shard }}/10 --workers=5
-        # run: npx tdpw test -t $TESTDINO_TOKEN --server-url $TESTDINO_SERVER_URL --ci-run-id $TESTDINO_CI_RUN_ID --workers=5
+        # run: npx tdpw test -t $TESTDINO_TOKEN --server-url $TESTDINO_SERVER_URL --ci-run-id $TESTDINO_CI_RUN_ID --shard=${{ matrix.shard }}/10 --workers=5
+        run: npx tdpw test -t $TESTDINO_TOKEN --server-url $TESTDINO_SERVER_URL --ci-run-id $TESTDINO_CI_RUN_ID --workers=5
 
       # ✅ Upload blob report (needed for merge)
       - name: Upload blob report
