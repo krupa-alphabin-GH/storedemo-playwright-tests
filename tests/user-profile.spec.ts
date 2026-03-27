@@ -413,9 +413,9 @@ test.describe('User Profile', () => {
   });
 
 
-  test.skip('Upload profile picture', async ({ page }) => {
-    await page.goto('/');
-  });
+  // test.skip('Upload profile picture', async ({ page }) => {
+  //   await page.goto('/');
+  // });
 
   // test.skip('Delete user account', async ({ page }) => {
   //   await page.goto('/');
