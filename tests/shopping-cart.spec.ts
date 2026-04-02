@@ -446,7 +446,7 @@ test.describe('Shopping Cart', () => {
     await expect(btn).toBeVisible({ timeout: 10000 });
   });
 
-  test('Flaky - Cart animation rendering', async ({ page }) => {
+  test.only('Flaky - Cart animation rendering', async ({ page }) => {
     if (test.info().retry === 0) { expect(true).toBe(false); }
     await page.goto('/products');
     await page.waitForTimeout(3000);
