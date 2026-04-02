@@ -454,12 +454,12 @@ test.describe('Shopping Cart', () => {
     await expect(cartIcon).toBeVisible({ timeout: 10000 });
   });
 
-  test.only('Flaky - Cart badge count update', async ({ page }) => {
-    if (test.info().retry === 0) { expect(true).toBe(false); }
-    await page.goto('/products');
-    await page.waitForTimeout(3000);
-    await expect(page).toHaveURL(/products/);
-  });
+  // test.only('Flaky - Cart badge count update', async ({ page }) => {
+  //   if (test.info().retry === 0) { expect(true).toBe(false); }
+  //   await page.goto('/products');
+  //   await page.waitForTimeout(3000);
+  //   await expect(page).toHaveURL(/products/);
+  // });
 
   test.skip('Apply coupon code to cart', async ({ page }) => {
     await page.goto('/products');
